@@ -20,6 +20,8 @@ Set your API key in the environment first. Service availability and credit usage
 
 ## Examples
 
+[بررسی نمونه‌ها / Verification](docs/VALIDATION.md)
+
 - [Python CLI](examples/python/nevisa.py) — REST and WebSocket, Python 3.10+.
 - [JavaScript CLI](examples/javascript/nevisa.mjs) — REST, Node.js 22+, no npm dependencies.
 - [cURL ASR workflow](examples/curl/asr.sh) — Bash, curl and jq, including polling.
