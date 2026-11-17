@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nevisa · نمونهٔ میکروفن / Microphone demo</title>
+<style>body{max-width:760px;margin:3rem auto;padding:1rem;font:18px system-ui;line-height:1.8}button,select{font:inherit;padding:.5rem;margin:.3rem}pre{white-space:pre-wrap;background:#f2f5f6;padding:1rem}#partial{color:#777}</style>
+<h1>نویسا · Microphone</h1>
+<p>کلید در بک‌اند محلی نگه داشته می‌شود. ضبط با توقف یا پس از یک دقیقه تمام می‌شود.<br>Key stays on the local backend. Capture stops manually or after one minute.</p>
+<select id="model" aria-label="Model"><option value="live">نویسا لایو / Nevisa Live</option><option value="fusion">نویسا فیوژن / Nevisa Fusion</option></select>
+<button id="start">شروع / Start</button><button id="stop" disabled>توقف / Stop</button>
+<p id="status" role="status"></p><pre><span id="final"></span><span id="partial"></span></pre>
+<script type="module">
+const $ = id => document.getElementById(id);
+let socket, context, stream, worklet, source, timer, deadline;
+const releaseMic = async () => {
+  clearTimeout(timer);
+  worklet?.disconnect(); source?.disconnect();
+  stream?.getTracks().forEach(track => track.stop());
+  stream = null;
+  if (context && context.state !== 'closed') await context.close();
+};
+const finish = async () => {
+  clearTimeout(deadline); await releaseMic(); socket?.close();
+  $('start').disabled = false; $('stop').disabled = true; $('model').disabled = false;
+};
+$('stop').onclick = async () => {
+  if (worklet) {
+    await new Promise(resolve => {
+      const prior = worklet.port.onmessage;
+      worklet.port.onmessage = event => {
+        if (event.data === 'flushed') { worklet.port.onmessage = prior; resolve(); }
+        else prior(event);
+      };
+      worklet.port.postMessage('flush');
+      setTimeout(resolve, 1000);
+    });
+  }
+  $('stop').disabled = true; await releaseMic();
+  if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({type:'stop'}));
+  $('status').textContent = 'در انتظار متن نهایی / Waiting for final text';
+};
+$('start').onclick = async () => {
+  $('start').disabled = true; $('model').disabled = true;
+  $('final').textContent = ''; $('partial').textContent = '';
+  $('status').textContent = 'در حال اتصال / Connecting';
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true}});
+    context = new AudioContext({sampleRate:16000});
+    if (context.sampleRate !== 16000) throw new Error('Use a browser supporting 16 kHz AudioContext.');
+    await context.audioWorklet.addModule('/pcm-worklet.js');
+    source = context.createMediaStreamSource(stream);
+    worklet = new AudioWorkletNode(context, 'pcm16');
+    const mute = context.createGain(); mute.gain.value = 0;
+    worklet.connect(mute).connect(context.destination);
+    socket = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/stream`);
+    worklet.port.onmessage = ({data}) => {
+      if (socket.readyState === WebSocket.OPEN && !$('stop').disabled) socket.send(data);
+    };
+    socket.onopen = () => socket.send(JSON.stringify({type:'start', language:'fa', sample_rate:16000, fusion:$('model').value === 'fusion'}));
+    socket.onmessage = async ({data}) => {
+      const message = JSON.parse(data);
+      if (message.type === 'started') {
+        source.connect(worklet); await context.resume();
+        $('stop').disabled = false; $('status').textContent = 'در حال ضبط / Recording';
+        timer = setTimeout(() => $('stop').click(), 60000);
+      } else if (message.type === 'partial') $('partial').textContent = message.text || '';
+      else if (message.type === 'final') {
+        $('final').textContent += `${message.text || ''} `; $('partial').textContent = '';
+      } else if (message.type === 'done') {
+        $('status').textContent = 'تکمیل شد / Completed'; await finish();
+      } else if (['error','usage_exhausted','site_unavailable'].includes(message.type)) {
+        $('status').textContent = message.detail || message.message || message.type; await finish();
+      }
+    };
+    socket.onerror = async () => { $('status').textContent = 'خطای اتصال / Connection error'; await finish(); };
+    socket.onclose = async () => { if ($('start').disabled) $('status').textContent = 'ارتباط بسته شد / Connection closed'; await finish(); };
+    deadline = setTimeout(async () => { $('status').textContent = 'پایان مهلت / Timeout'; await finish(); }, 120000);
+  } catch (error) { $('status').textContent = error.message; await finish(); }
+};
+window.addEventListener('pagehide', () => { stream?.getTracks().forEach(track => track.stop()); socket?.close(); });
+</script>
+</html>
