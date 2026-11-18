@@ -124,6 +124,13 @@ class Examples(unittest.TestCase):
                 if "://" not in target and not target.startswith("#"):
                     self.assertTrue((path.parent / target.split("#")[0]).exists(), (path, target))
 
+    @unittest.skipUnless(all(shutil.which(tool) for tool in ("bash", "curl", "jq")), "Requires Bash, curl and jq")
+    def test_curl_transcribes_and_polls(self):
+        command = ["bash", str(ROOT / "examples/curl/asr.sh")]
+        result = self.run_cli(command, [str(self.fixture), "nevisa-fusion"])
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("متن آزمایشی", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
