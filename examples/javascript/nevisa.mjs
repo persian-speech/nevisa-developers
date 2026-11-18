@@ -7,7 +7,7 @@ const usage = `Usage: node examples/javascript/nevisa.mjs <command> [arguments]
   balance
   discover
   asr AUDIO [nevisa-file|nevisa-live|nevisa-fusion]
-  tts TEXT [pocket-nova|chatterbox-persian] [SPEAKER_NUMBER] [speech.mp3]
+  tts TEXT [pocket-nova|ariana-ava] [SPEAKER_NUMBER] [speech.mp3]
   ocr DOCUMENT [PAGES]
   chat PROMPT
 Set NEVISA_API_KEY; optionally NEVISA_BASE_URL and NEVISA_TIMEOUT (seconds).
@@ -71,13 +71,13 @@ async function main() {
     case 'tts': {
       if (!args[0]) throw new Error('Provide the text to synthesize.');
       const model = args[1] || 'pocket-nova';
-      const selected = (await json('/api/tts/jobs/models/')).find(item => item.id === model);
+      const selected = (await json('/api/tts/jobs/models/')).find(item => item.id === model || item.pricing_key === model);
       const speaker = Number(args[2] || 1);
       if (!selected || !Number.isInteger(speaker) || speaker < 1 || speaker > selected.voices.length) {
         throw new Error('Model/speaker unavailable. Run discover first.');
       }
       const form = new FormData();
-      form.set('text', args[0]); form.set('model', model);
+      form.set('text', args[0]); form.set('model', selected.id);
       form.set('voice', selected.voices[speaker - 1]); form.set('language', 'fa');
       const job = await wait('/api/tts/jobs/', created(await json('/api/tts/jobs/synthesize/', { method: 'POST', body: form }), false));
       const response = await request(`/api/tts/jobs/${job.job_key}/audio/?format=mp3&download=1`);

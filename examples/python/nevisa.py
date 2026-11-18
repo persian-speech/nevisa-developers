@@ -66,7 +66,10 @@ class Nevisa:
 
     def tts(self, text, model, speaker, output):
         models = self.json("GET", "/api/tts/jobs/models/")
-        selected = next((item for item in models if item["id"] == model), None)
+        selected = next(
+            (item for item in models if item["id"] == model or item.get("pricing_key") == model),
+            None,
+        )
         if selected is None:
             raise ValueError("Model unavailable. Run discover and choose an offered TTS id.")
         voices = selected.get("voices") or []
@@ -74,7 +77,7 @@ class Nevisa:
             raise ValueError(f"Choose a speaker number between 1 and {len(voices)}.")
         # Send form encoding; this endpoint doesn't accept a JSON request body.
         body = self.json("POST", "/api/tts/jobs/synthesize/",
-                         data={"text": text, "model": model, "voice": voices[speaker - 1], "language": "fa"})
+                         data={"text": text, "model": selected["id"], "voice": voices[speaker - 1], "language": "fa"})
         job = self.wait("tts", self.created(body, array=False))
         audio = self.request("GET", f"/api/tts/jobs/{job['job_key']}/audio/?format=mp3&download=1")
         Path(output).write_bytes(audio.content)
@@ -171,7 +174,7 @@ def main():
     asr.add_argument("--engine", choices=["nevisa-file", "nevisa-live", "nevisa-fusion"], default="nevisa-file")
     tts = sub.add_parser("tts")
     tts.add_argument("text")
-    tts.add_argument("--model", default="pocket-nova", help="Ariana Nova: pocket-nova; Ariana Ava: chatterbox-persian")
+    tts.add_argument("--model", default="pocket-nova", help="Ariana Nova: pocket-nova; Ariana Ava: ariana-ava")
     tts.add_argument("--speaker", type=int, default=1)
     tts.add_argument("--output", default="speech.mp3")
     ocr = sub.add_parser("ocr")

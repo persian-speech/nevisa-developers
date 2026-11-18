@@ -48,7 +48,7 @@ python examples/python/nevisa.py discover
 
 برای تبدیل فایل از نویسا فایل با شناسهٔ `nevisa-file`، نویسا لایو با `nevisa-live` یا نویسا فیوژن با `nevisa-fusion` استفاده کنید. پارامتر `live_model` را نفرستید تا مدل فعال سرور انتخاب شود؛ نسخهٔ قدیمی را در کد ثابت نکنید.
 
-شناسهٔ API آریانا نوا `pocket-nova` و آریانا آوا `chatterbox-persian` است. این‌ها شناسهٔ فنی درخواست هستند؛ نام نمایشی همان آریانا نوا و آریانا آوا باشد. فقط مدلی را انتخاب کنید که در پاسخ کشف مدل‌ها وجود دارد. صداهای پیش‌فرض را به‌ترتیب **گوینده ۱**، **گوینده ۲** و ... نمایش دهید و شناسهٔ متناظر را در درخواست بفرستید. نمونه‌های پایتون و جاوااسکریپت شمارهٔ گوینده را از ۱ می‌گیرند و این تطبیق را انجام می‌دهند.
+شناسهٔ API آریانا نوا `pocket-nova` و آریانا آوا `ariana-ava` است. این‌ها شناسهٔ فنی درخواست هستند؛ نام نمایشی همان آریانا نوا و آریانا آوا باشد. فقط مدلی را انتخاب کنید که در پاسخ کشف مدل‌ها وجود دارد. صداهای پیش‌فرض را به‌ترتیب **گوینده ۱**، **گوینده ۲** و ... نمایش دهید و شناسهٔ متناظر را در درخواست بفرستید. نمونه‌های پایتون و جاوااسکریپت شمارهٔ گوینده را از ۱ می‌گیرند و این تطبیق را انجام می‌دهند.
 
 ## ۳. تبدیل فایل صوتی و فیوژن
 
@@ -90,7 +90,7 @@ python examples/python/nevisa.py live voice.wav --fusion
 
 ```bash
 python examples/python/nevisa.py tts "سلام، به نویسا خوش آمدید." --model pocket-nova --speaker 1 --output nova.mp3
-python examples/python/nevisa.py tts "سلام، روز خوبی داشته باشید." --model chatterbox-persian --speaker 3 --output ava.mp3
+python examples/python/nevisa.py tts "سلام، روز خوبی داشته باشید." --model ariana-ava --speaker 3 --output ava.mp3
 node examples/javascript/nevisa.mjs tts "سلام، خوش آمدید." pocket-nova 1 speech.mp3
 ```
 
