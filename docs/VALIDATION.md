@@ -6,8 +6,8 @@ On 2026-11-18, the runnable clients completed **18 real API checks** against the
 
 | Client | Verified requests |
 |---|---|
-| Python | Balance, discovery, Ariana Nova speaker 1, Ariana Ava speaker 3, Nevisa File/Live/Fusion file ASR, live WebSocket with and without fusion, Bina image and PDF, language model |
-| Node.js | Balance, Ariana Nova speaker 2, fusion file ASR, Bina PDF, language model |
+| Python | Balance, discovery, Ariana Nava speaker 1, Ariana Ava speaker 3, Nevisa File/Live/Fusion file ASR, live WebSocket with and without fusion, Bina image and PDF, language model |
+| Node.js | Balance, Ariana Nava speaker 2, fusion file ASR, Bina PDF, language model |
 | Bash/cURL | File upload, polling and transcript |
 
 The HTTP contract tests also check revoked keys, failed jobs, rejected uploads, speaker mapping, file downloads, and documentation links. Run them locally after installing the Python requirements and Node.js.

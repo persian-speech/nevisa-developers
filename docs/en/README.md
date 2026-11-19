@@ -48,7 +48,7 @@ The examples read environment variables directly; copying `.env.example` to `.en
 
 Use Nevisa File (`nevisa-file`), Nevisa Live (`nevisa-live`) or Nevisa Fusion (`nevisa-fusion`) for file ASR. Omit `live_model` to use the server's active live model. Do not pin a previous model version unless the installation requires it.
 
-Ariana Nova uses API id `pocket-nova`; Ariana Ava uses `ariana-ava`. These are stable API identifiers, not display names. Select an offered id from discovery. Label the returned preset voices **Speaker 1**, **Speaker 2**, etc., and send the corresponding voice id; do not display the raw voice id as the product label. The Python and JavaScript CLIs accept a 1-based speaker number and perform this mapping.
+Ariana Nava uses API id `pocket-nova`; Ariana Ava uses `ariana-ava`. These are stable API identifiers, not display names. Select an offered id from discovery. Label the returned preset voices **Speaker 1**, **Speaker 2**, etc., and send the corresponding voice id; do not display the raw voice id as the product label. The Python and JavaScript CLIs accept a 1-based speaker number and perform this mapping.
 
 ## 3. File transcription and fusion
 
@@ -89,7 +89,7 @@ Replace the displayed provisional text on each `partial`; append only `final` te
 ## 5. Text to speech
 
 ```bash
-python examples/python/nevisa.py tts "سلام، به نویسا خوش آمدید." --model pocket-nova --speaker 1 --output nova.mp3
+python examples/python/nevisa.py tts "سلام، به نویسا خوش آمدید." --model pocket-nova --speaker 1 --output nava.mp3
 python examples/python/nevisa.py tts "سلام، روز خوبی داشته باشید." --model ariana-ava --speaker 3 --output ava.mp3
 node examples/javascript/nevisa.mjs tts "سلام، خوش آمدید." pocket-nova 1 speech.mp3
 ```
