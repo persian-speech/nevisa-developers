@@ -174,7 +174,7 @@ def main():
     asr.add_argument("--engine", choices=["nevisa-file", "nevisa-live", "nevisa-fusion"], default="nevisa-file")
     tts = sub.add_parser("tts")
     tts.add_argument("text")
-    tts.add_argument("--model", default="pocket-nova", help="Ariana Nova: pocket-nova; Ariana Ava: ariana-ava")
+    tts.add_argument("--model", default="pocket-nova", help="Ariana Nava: pocket-nova; Ariana Ava: ariana-ava")
     tts.add_argument("--speaker", type=int, default=1)
     tts.add_argument("--output", default="speech.mp3")
     ocr = sub.add_parser("ocr")

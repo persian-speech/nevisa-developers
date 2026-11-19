@@ -89,7 +89,7 @@ python examples/python/nevisa.py live voice.wav --fusion
 ## ۵. تبدیل متن به گفتار
 
 ```bash
-python examples/python/nevisa.py tts "سلام، به نویسا خوش آمدید." --model pocket-nova --speaker 1 --output nova.mp3
+python examples/python/nevisa.py tts "سلام، به نویسا خوش آمدید." --model pocket-nova --speaker 1 --output nava.mp3
 python examples/python/nevisa.py tts "سلام، روز خوبی داشته باشید." --model ariana-ava --speaker 3 --output ava.mp3
 node examples/javascript/nevisa.mjs tts "سلام، خوش آمدید." pocket-nova 1 speech.mp3
 ```
