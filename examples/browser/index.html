@@ -46,7 +46,7 @@ $('start').onclick = async () => {
   try {
     stream = await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true}});
     context = new AudioContext({sampleRate:16000});
-    if (context.sampleRate !== 16000) throw new Error('Use a browser supporting 16 kHz AudioContext.');
+    if (context.sampleRate < 8000 || context.sampleRate > 96000) throw new Error('Unsupported AudioContext sample rate.');
     await context.audioWorklet.addModule('/pcm-worklet.js');
     source = context.createMediaStreamSource(stream);
     worklet = new AudioWorkletNode(context, 'pcm16');
@@ -56,7 +56,7 @@ $('start').onclick = async () => {
     worklet.port.onmessage = ({data}) => {
       if (socket.readyState === WebSocket.OPEN && !$('stop').disabled) socket.send(data);
     };
-    socket.onopen = () => socket.send(JSON.stringify({type:'start', language:'fa', sample_rate:16000, fusion:$('model').value === 'fusion'}));
+    socket.onopen = () => socket.send(JSON.stringify({type:'start', language:'fa', sample_rate:context.sampleRate, fusion:$('model').value === 'fusion'}));
     socket.onmessage = async ({data}) => {
       const message = JSON.parse(data);
       if (message.type === 'started') {

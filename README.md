@@ -11,7 +11,7 @@ Integrate Nevisa speech recognition, live streaming and fusion, speech synthesis
 | ASR فایل / File ASR | نویسا فایل / Nevisa File | `python examples/python/nevisa.py asr audio.mp3` |
 | ASR لایو / Live ASR | نویسا لایو / Nevisa Live | `python examples/python/nevisa.py live voice.wav` |
 | ASR فیوژن / Fusion ASR | نویسا فیوژن / Nevisa Fusion | `python examples/python/nevisa.py asr audio.mp3 --engine nevisa-fusion` |
-| TTS | آریانا نوا، آریانا آوا / Ariana Nava, Ariana Ava | `python examples/python/nevisa.py tts "سلام، خوش آمدید."` |
+| TTS | آریانا نوا، آریانا آوا، آریانا ندا / Ariana Nava, Ariana Ava, Ariana Neda | `python examples/python/nevisa.py tts "سلام، خوش آمدید."` |
 | OCR | Bina | `python examples/python/nevisa.py ocr scan.pdf --pages 1` |
 | LLM | مدل زبانی نویسا / Nevisa language model | `python examples/python/nevisa.py chat "یک جمله درباره بهار بنویس."` |
 

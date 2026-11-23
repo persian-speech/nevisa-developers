@@ -40,7 +40,7 @@ class Nevisa:
     def wait(self, service, job):
         path = {"asr": "/api/jobs/", "tts": "/api/tts/jobs/", "ocr": "/api/ocr/jobs/"}[service]
         deadline = time.monotonic() + self.timeout
-        while job["status"] not in ("completed", "failed", "canceled"):
+        while job["status"] not in ("completed", "failed", "canceled", "paused"):
             if time.monotonic() >= deadline:
                 raise TimeoutError(f"Polling deadline reached. Resume with GET {path}{job['job_key']}/")
             time.sleep(2)
@@ -174,7 +174,7 @@ def main():
     asr.add_argument("--engine", choices=["nevisa-file", "nevisa-live", "nevisa-fusion"], default="nevisa-file")
     tts = sub.add_parser("tts")
     tts.add_argument("text")
-    tts.add_argument("--model", default="pocket-nova", help="Ariana Nava: pocket-nova; Ariana Ava: ariana-ava")
+    tts.add_argument("--model", default="pocket-nova", help="Ariana Nava: pocket-nova; Ariana Ava: ariana-ava; Ariana Neda: ariana-neda")
     tts.add_argument("--speaker", type=int, default=1)
     tts.add_argument("--output", default="speech.mp3")
     ocr = sub.add_parser("ocr")
@@ -209,6 +209,6 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except (ValueError, RuntimeError, TimeoutError, OSError, requests.RequestException) as exc:
+    except Exception as exc:
         print(str(exc), file=sys.stderr)
         sys.exit(1)

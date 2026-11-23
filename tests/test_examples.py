@@ -39,7 +39,7 @@ class API(BaseHTTPRequestHandler):
         if self.path == "/api/ocr/jobs/engines/":
             return self.reply([{"id": "bina", "label": "Bina"}])
         if self.path == "/api/jobs/engines/":
-            return self.reply({"engines": [{"id": "nevisa-file"}, {"id": "nevisa-fusion"}]})
+            return self.reply([{"name": "nevisa-file", "id": "nevisa-file"}, {"name": "nevisa-fusion", "id": "nevisa-fusion"}])
         if self.path == "/api/llm/v1/models":
             return self.reply({"data": [{"id": "nevisa-llm"}]})
         if self.path == "/api/billing/balance/":
@@ -55,7 +55,7 @@ class API(BaseHTTPRequestHandler):
             assert data["model"] == "nevisa-llm"
             return self.reply({"choices": [{"message": {"content": "پاسخ آزمایشی"}}]})
         if API.mode == "partial":
-            return self.reply({"created": [], "errors": [{"code": "duration_limit"}]}, 201)
+            return self.reply({"created": [], "errors": [{"code": "duration_exceeded"}]}, 201)
         job = {"job_key": "fixture-job", "status": "queued"}
         self.reply({"created": job} if "/tts/" in self.path else {"created": [job], "errors": []}, 201)
 
@@ -111,7 +111,7 @@ class Examples(unittest.TestCase):
 
     def test_rejected_upload_and_revoked_key_fail(self):
         for command, language in self.clients():
-            for args, mode, expected in [(["balance"], "unauthorized", "401"), (["asr", str(self.fixture)], "partial", "duration_limit"), (["asr", str(self.fixture)], "failed", "fixture failure")]:
+            for args, mode, expected in [(["balance"], "unauthorized", "401"), (["asr", str(self.fixture)], "partial", "duration_exceeded"), (["asr", str(self.fixture)], "failed", "fixture failure")]:
                 with self.subTest(language=language, mode=mode):
                     result = self.run_cli(command, args, mode)
                     self.assertNotEqual(result.returncode, 0)

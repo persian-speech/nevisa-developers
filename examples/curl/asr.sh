@@ -22,7 +22,7 @@ while (( SECONDS < deadline )); do
   job="$(api "$base/api/jobs/$job_key/")"
   case "$(jq -r .status <<<"$job")" in
     completed) jq -r .result_text <<<"$job"; exit 0;;
-    failed|canceled) jq -r .error_message <<<"$job" >&2; exit 1;;
+    failed|canceled|paused) jq -r '(.error_message // .status)' <<<"$job" >&2; exit 1;;
   esac
   sleep 2
 done
