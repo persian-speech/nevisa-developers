@@ -6,7 +6,7 @@
 
 Sign in at [persianspeech.com](https://persianspeech.com), open [API keys](https://persianspeech.com/dashboard/account/api-keys), create a personal key, and copy it when shown. Use [Developers](https://persianspeech.com/dashboard/developers) for interactive requests, service references and current rates.
 
-HTTP requests accept `X-API-Key: nv_...` or `Authorization: Bearer nv_...`. The key grants access as its owner. Keep it on your backend, outside source control and client bundles. Revoke it from API keys if exposed. WebSocket clients can send `X-API-Key` during the handshake. Browser WebSocket cannot set custom headers; use an authenticated backend relay for a distributed application.
+HTTP requests to ASR, Live, TTS, OCR, LLM, and `/api/billing/balance/` accept `X-API-Key: nv_...` or `Authorization: Bearer nv_...` (to exchange an API key for a short-lived JWT on the auth service, call `POST /api/auth/api-keys/token/`). The key grants access as its owner. Keep it on your backend, outside source control and client bundles. Revoke it from API keys if exposed. WebSocket clients can send `X-API-Key` during the handshake. Browser WebSocket cannot set custom headers; use an authenticated backend relay for a distributed application.
 
 The base URL is the **origin**, without `/api` appended. For an enterprise installation, set the origin of that installation; its enabled services, model choices and account policy may differ. Discovery and the installation's own API reference are authoritative.
 
@@ -40,15 +40,15 @@ The examples read environment variables directly; copying `.env.example` to `.en
 
 | Method | Path | Response |
 |---|---|---|
-| GET | `/api/jobs/engines/` | Available ASR engines and active model information |
+| GET | `/api/jobs/engines/` | Array of available ASR engines and active model information |
 | GET | `/api/tts/jobs/models/` | Array of TTS models, voice ids and capabilities |
 | GET | `/api/ocr/jobs/engines/` | Available OCR engines |
 | GET | `/api/llm/v1/models` | OpenAI-shaped `data` array |
-| GET | `/api/billing/balance/` | Account credit and current rates |
+| GET | `/api/billing/balance/` | Account credit and current rates (online/SaaS edition) |
 
 Use Nevisa File (`nevisa-file`), Nevisa Live (`nevisa-live`) or Nevisa Fusion (`nevisa-fusion`) for file ASR. Omit `live_model` to use the server's active live model. Do not pin a previous model version unless the installation requires it.
 
-Ariana Nava uses API id `pocket-nova`; Ariana Ava uses `ariana-ava`. These are stable API identifiers, not display names. Select an offered id from discovery. Label the returned preset voices **Speaker 1**, **Speaker 2**, etc., and send the corresponding voice id; do not display the raw voice id as the product label. The Python and JavaScript CLIs accept a 1-based speaker number and perform this mapping.
+Ariana Nava uses API id `pocket-nova`; Ariana Ava uses `ariana-ava`; Ariana Neda uses `ariana-neda`. These are stable API identifiers, not display names. Select an offered id from discovery. Label the returned preset voices **Speaker 1**, **Speaker 2**, etc., and send the corresponding voice id; do not display the raw voice id as the product label. The Python and JavaScript CLIs accept a 1-based speaker number and perform this mapping.
 
 ## 3. File transcription and fusion
 
@@ -129,7 +129,7 @@ All requests use the same account. ASR/live usage is based on audio duration and
 
 | HTTP / event | What to do |
 |---|---|
-| 400 / validation, `duration_limit` | Correct fields, file format or length; inspect `errors` for batch jobs |
+| 400 / validation, `duration_exceeded` | Correct fields, file format or length; inspect `errors` for batch jobs |
 | 401 | Check or revoke/recreate the key |
 | 402 / `insufficient_credit`, 400 / `usage_exceeded` | Check balance and account eligibility |
 | 403 / `section_disabled` | Service disabled by the administrator |

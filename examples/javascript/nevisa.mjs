@@ -7,7 +7,7 @@ const usage = `Usage: node examples/javascript/nevisa.mjs <command> [arguments]
   balance
   discover
   asr AUDIO [nevisa-file|nevisa-live|nevisa-fusion]
-  tts TEXT [pocket-nova|ariana-ava] [SPEAKER_NUMBER] [speech.mp3]
+  tts TEXT [pocket-nova|ariana-ava|ariana-neda] [SPEAKER_NUMBER] [speech.mp3]
   ocr DOCUMENT [PAGES]
   chat PROMPT
 Set NEVISA_API_KEY; optionally NEVISA_BASE_URL and NEVISA_TIMEOUT (seconds).
@@ -38,7 +38,7 @@ async function main() {
   };
   const wait = async (prefix, job) => {
     const deadline = Date.now() + timeout;
-    while (!['completed', 'failed', 'canceled'].includes(job.status)) {
+    while (!['completed', 'failed', 'canceled', 'paused'].includes(job.status)) {
       if (Date.now() >= deadline) throw new Error(`Polling deadline reached. Resume with GET ${prefix}${job.job_key}/`);
       await sleep(2000);
       job = await json(`${prefix}${job.job_key}/`);
